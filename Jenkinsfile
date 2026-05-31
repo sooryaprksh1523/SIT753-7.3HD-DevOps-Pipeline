@@ -106,19 +106,31 @@ pipeline {
     }
 
     stage('Monitoring') {
-      steps {
-        bat '''
-          echo ===== MONITORING STAGE =====
-          echo Waiting for application container to start...
-          powershell -NoProfile -Command "Start-Sleep -Seconds 30"
+  steps {
+    bat '''
+      echo ===== MONITORING STAGE =====
+      echo Waiting for application container to start...
+      powershell -NoProfile -Command "Start-Sleep -Seconds 30"
 
-          echo Checking application health endpoint...
-          powershell -NoProfile -Command "$response = Invoke-WebRequest -UseBasicParsing http://localhost:%APP_PORT%/actuator/health; Write-Output $response.Content; if ($response.Content -notmatch 'UP') { exit 1 }"
+      echo Checking application health endpoint...
+      curl -s http://localhost:%APP_PORT%/actuator/health > health.txt
 
-          echo Monitoring check completed successfully.
-        '''
-      }
-    }
+      echo Health response:
+      type health.txt
+
+      findstr /C:"UP" health.txt
+
+      if %ERRORLEVEL% EQU 0 (
+        echo Monitoring check completed successfully. Application status is UP.
+        exit /b 0
+      ) else (
+        echo Monitoring check failed. Application status is not UP.
+        docker logs sit753-my-app
+        exit /b 1
+      )
+    '''
+  }
+}
   }
 
   post {
