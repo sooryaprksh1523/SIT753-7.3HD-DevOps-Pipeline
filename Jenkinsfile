@@ -8,9 +8,10 @@ pipeline {
     string(name: 'VERSION', defaultValue: 'latest', description: 'Docker image version')
   }
 
-  tools {
-    jdk 'java25'
-    maven 'maven3'
+  environment {
+    JAVA_HOME = tool name: 'java25', type: 'jdk'
+    MAVEN_HOME = tool name: 'maven3', type: 'maven'
+    PATH = "${JAVA_HOME}\\bin;${MAVEN_HOME}\\bin;${env.PATH}"
   }
 
   stages {
@@ -22,13 +23,17 @@ pipeline {
 
     stage('Build') {
       steps {
-        bat 'mvn.cmd -B -DskipTests package'
+        bat '''
+          echo Java path is %JAVA_HOME%
+          echo Maven path is %MAVEN_HOME%
+          "%MAVEN_HOME%\\bin\\mvn.cmd" -B -DskipTests package
+        '''
       }
     }
 
     stage('Test') {
       steps {
-        bat 'mvn.cmd -B test'
+        bat '"%MAVEN_HOME%\\bin\\mvn.cmd" -B test'
       }
       post {
         always {
@@ -39,14 +44,14 @@ pipeline {
 
     stage('Code Quality') {
       steps {
-        bat 'mvn.cmd -B verify'
+        bat '"%MAVEN_HOME%\\bin\\mvn.cmd" -B verify'
       }
     }
 
     stage('Security') {
       steps {
         bat '''
-          echo Running Trivy security scan...
+          echo Running security scan...
           trivy fs --exit-code 0 --no-progress . || echo Security scan completed with warning
         '''
       }
@@ -71,7 +76,7 @@ pipeline {
         bat '''
           echo Release created for application: %IMAGE%
           echo Release version: %VERSION%
-          echo This build is marked as the stable release after successful pipeline stages.
+          echo This build is marked as the stable release after successful stages.
         '''
       }
     }
