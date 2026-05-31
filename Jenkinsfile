@@ -10,7 +10,7 @@ pipeline {
 
   environment {
     JAVA_HOME = tool name: 'java25', type: 'jdk'
-    MAVEN_HOME = tool name: 'maven3', type: 'maven'
+    MAVEN_HOME = tool name: 'maven3', type: 'hudson.tasks.Maven$MavenInstallation'
     PATH = "${JAVA_HOME}\\bin;${MAVEN_HOME}\\bin;${env.PATH}"
   }
 
