@@ -49,14 +49,20 @@ pipeline {
     }
 
     stage('Security') {
-      steps {
-        bat '''
-          echo Running security scan...
-          trivy fs --exit-code 0 --no-progress . || echo Security scan completed with warning
-        '''
-      }
-    }
-
+  steps {
+    bat '''
+      echo Running security scan stage...
+      where trivy
+      if %ERRORLEVEL% EQU 0 (
+        trivy fs --exit-code 0 --no-progress .
+      ) else (
+        echo Trivy is not installed on this Jenkins machine.
+        echo Security stage completed with documented warning.
+      )
+      exit /b 0
+    '''
+  }
+}
     stage('Deploy') {
       when {
         expression { return params.DEPLOY_LOCAL }
