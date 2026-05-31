@@ -79,7 +79,7 @@ pipeline {
           docker ps
 
           echo Building Docker image...
-          docker build -t %IMAGE%:%VERSION% -f Dockerfile .
+         docker build --no-cache -t %IMAGE%:%VERSION% -f Dockerfile .
 
           echo Removing old container if it exists...
           docker rm -f sit753-my-app || echo No old container found
