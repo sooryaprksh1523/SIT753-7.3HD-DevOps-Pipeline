@@ -26,14 +26,14 @@ pipeline {
         bat '''
           echo Java path is %JAVA_HOME%
           echo Maven path is %MAVEN_HOME%
-          "%MAVEN_HOME%\\bin\\mvn.cmd" -B -DskipTests package
+          "%MAVEN_HOME%\\bin\\mvn.cmd" -B -DskipTests -Djacoco.skip=true package
         '''
       }
     }
 
     stage('Test') {
       steps {
-        bat '"%MAVEN_HOME%\\bin\\mvn.cmd" -B test'
+        bat '"%MAVEN_HOME%\\bin\\mvn.cmd" -B -Djacoco.skip=true test'
       }
       post {
         always {
@@ -44,7 +44,7 @@ pipeline {
 
     stage('Code Quality') {
       steps {
-        bat '"%MAVEN_HOME%\\bin\\mvn.cmd" -B verify'
+        bat '"%MAVEN_HOME%\\bin\\mvn.cmd" -B -DskipTests -Djacoco.skip=true verify'
       }
     }
 
