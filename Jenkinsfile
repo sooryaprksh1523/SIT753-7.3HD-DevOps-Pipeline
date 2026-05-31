@@ -22,13 +22,13 @@ pipeline {
 
     stage('Build') {
       steps {
-        bat 'mvn -B -DskipTests package'
+        bat 'mvn.cmd -B -DskipTests package'
       }
     }
 
     stage('Test') {
       steps {
-        bat 'mvn -B test'
+        bat 'mvn.cmd -B test'
       }
       post {
         always {
@@ -39,7 +39,7 @@ pipeline {
 
     stage('Code Quality') {
       steps {
-        bat 'mvn -B verify'
+        bat 'mvn.cmd -B verify'
       }
     }
 
