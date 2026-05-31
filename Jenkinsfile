@@ -56,18 +56,18 @@ pipeline {
     }
 
     stage('Security') {
-      steps {
-        bat '''
-          echo ===== SECURITY STAGE =====
-          echo Checking Trivy installation...
-          where trivy
-          trivy --version
+  steps {
+    bat '''
+      echo ===== SECURITY STAGE =====
+      echo Checking Trivy installation...
 
-          echo Running Trivy file system security scan...
-          trivy fs --severity HIGH,CRITICAL --exit-code 0 --no-progress .
-        '''
-      }
-    }
+      "C:\\Users\\soory\\AppData\\Local\\Microsoft\\WinGet\\Packages\\AquaSecurity.Trivy_Microsoft.Winget.Source_8wekyb3d8bbwe\\trivy.exe" --version
+
+      echo Running Trivy file system security scan...
+      "C:\\Users\\soory\\AppData\\Local\\Microsoft\\WinGet\\Packages\\AquaSecurity.Trivy_Microsoft.Winget.Source_8wekyb3d8bbwe\\trivy.exe" fs --severity HIGH,CRITICAL --exit-code 0 --no-progress .
+    '''
+  }
+}
 
     stage('Deploy') {
       steps {
